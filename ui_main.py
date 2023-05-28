@@ -957,6 +957,126 @@ def save_to_a_database():
             sheet.delete_rows(row[0].row)
 
         workbook.save(path)
+# ================================================================================
+def search():
+    amazon_iherb_value = amazon_iherb_option_var.get()
+
+    if amazon_iherb_value == "amazon": 
+        search_asin_code = code_entry.get()
+        search_amazon_product_list = pd.read_excel("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx", sheet_name="amazon")
+        filtered_row = search_amazon_product_list[search_amazon_product_list.iloc[:, 0] == search_asin_code]
+
+        if filtered_row is False:
+            print("해당 제품은 존재하지 않습니다!")
+        else:
+            search_amazon_value = filtered_row.iloc[0, 3]
+
+            url_textbox.delete("0.0", ctk.END)
+            url_textbox.insert("0.0", search_amazon_value)
+        
+        ''''''
+
+        from PIL import Image, ImageOps
+
+        img_path=f"C:/Users/TILLIDIE/Desktop/kme/amazon/{search_asin_code}/image1.jpg"
+        image = Image.open(img_path)
+        new_image = ImageOps.pad(image, (180, 180), color='white')
+        border_thickness = 10
+        image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
+        photo = ImageTk.PhotoImage(image_with_border)
+        product_image_canvas.create_image(100, 100, anchor="center", image=photo)
+        product_image_canvas.image = photo
+
+        ''''''
+
+        ingredients_filtered_row = search_amazon_product_list[search_amazon_product_list.iloc[:, 0] == search_asin_code]
+        value = ingredients_filtered_row.iloc[0, 2]
+                
+        import numpy as np
+
+        if not isinstance(value, float) or not np.isnan(value):
+            ingredients_textbox.delete("0.0", ctk.END)
+            ingredients_textbox.insert("0.0", value)
+        else:
+            ingredients_textbox.delete("0.0", ctk.END)
+            ingredients_textbox.insert("0.0", "")
+
+        ''''''
+
+        warning_filtered_row = search_amazon_product_list[search_amazon_product_list.iloc[:, 0] == search_asin_code]
+        warning_value = warning_filtered_row.iloc[0, 2]
+
+        import numpy as np
+
+        if not isinstance(value, float) or not np.isnan(warning_value):
+            name_lable.configure(text="의심되는 성분이 존재합니다!")
+        else:
+            name_lable.configure(text="금지성분이 발견되지 않았습니다.")
+
+        ''''''
+        code_lable.configure(text=search_asin_code)
+
+    else:
+        search_product_id = code_entry.get()
+        search_iherb_product_list = pd.read_excel("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx", sheet_name="iherb")
+        filtered_row = search_iherb_product_list[search_iherb_product_list.iloc[:, 0].astype(str) == str(search_product_id)]
+        
+        if filtered_row.empty:
+            print("해당 제품은 존재하지 않습니다!")
+        else:
+            search_iherb_value = filtered_row.iloc[0, 3]
+
+            url_textbox.delete("0.0", ctk.END)
+            url_textbox.insert("0.0", search_iherb_value)
+
+        ''''''
+
+        from PIL import Image, ImageOps
+
+        img_path=f"C:/Users/TILLIDIE/Desktop/kme/iherb/{search_product_id}/image1.jpg"
+        image = Image.open(img_path)
+        new_image = ImageOps.pad(image, (180, 180), color='white')
+        border_thickness = 10
+        image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
+        photo = ImageTk.PhotoImage(image_with_border)
+        product_image_canvas.create_image(100, 100, anchor="center", image=photo)
+        product_image_canvas.image = photo
+
+        ''''''
+
+        ingredients_filtered_row = search_iherb_product_list[search_iherb_product_list.iloc[:, 0].astype(str) == str(search_product_id)]
+        value = ingredients_filtered_row.iloc[0, 2]
+                
+        import numpy as np
+
+        if not isinstance(value, float) or not np.isnan(value):
+            ingredients_textbox.delete("0.0", ctk.END)
+            ingredients_textbox.insert("0.0", value)
+        else:
+            ingredients_textbox.delete("0.0", ctk.END)
+            ingredients_textbox.insert("0.0", "")
+
+        ''''''
+
+        warning_filtered_row = search_iherb_product_list[search_iherb_product_list.iloc[:, 0].astype(str) == str(search_product_id)]
+        warning_value = warning_filtered_row.iloc[0, 2]
+
+        import numpy as np
+
+        if not isinstance(value, float) or not np.isnan(warning_value):
+            name_lable.configure(text="의심되는 성분이 존재합니다!")
+        else:
+            name_lable.configure(text="금지성분이 발견되지 않았습니다.")
+
+        ''''''
+        code_lable.configure(text=search_product_id)
+# ================================================================================
+def copy_URL():
+    import pyperclip
+
+    url_text = url_textbox.get("0.0", ctk.END)
+    pyperclip.copy(url_text)
+# ================================================================================
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 # ui
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -1173,7 +1293,8 @@ code_entry = ctk.CTkEntry(frame_07, placeholder_text="product code") # text box 
 code_entry.pack(fill="x", expand=True, side="left", padx=(20,5), pady=10)
 
 # search button
-search_button = ctk.CTkButton(frame_07, text="search")
+search_button = ctk.CTkButton(frame_07, text="search", 
+                              command=search)
 search_button.pack(fill="x", expand=True, side="left", padx=5, pady=10)
 
 # url textbox
@@ -1181,7 +1302,8 @@ url_textbox = ctk.CTkTextbox(frame_07, width=600, height=30)
 url_textbox.pack(fill="x", expand=True, side="left", padx=5, pady=10)
 
 # copy URL button
-copy_url_button = ctk.CTkButton(frame_07, text="copy URL")
+copy_url_button = ctk.CTkButton(frame_07, text="copy URL", 
+                                command=copy_URL)
 copy_url_button.pack(fill="x", expand=True, side="left", padx=(5,20), pady=10)
 
 ''''''
