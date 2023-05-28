@@ -743,11 +743,10 @@ def images_and_ingredients():
                 # print(other_ingredients_text)
                 
             from googletrans import Translator
-# =====
             translator = Translator()
             import time
             time.sleep(0.5)
-
+# =====
             # supplement_facts_text에서 '%하루 영양소 기준치' 이후의 문자열 추출
             match = re.search(r'%하루 영양소 기준치(.*?)$', supplement_facts_text, re.DOTALL)
             if match:
