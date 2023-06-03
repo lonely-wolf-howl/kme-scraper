@@ -26,10 +26,10 @@ if 'googletrans' in installed_packages:
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 # function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-amazon_urls = []
-iherb_urls = []
+amazon_urls = [] # 입력되는 'amazon_url'을 받기 위한 빈 배열을 선언합니다.
+iherb_urls = [] # 입력되는 'iherb_url'을 받기 위한 빈 배열을 선언합니다.
 
-thumbnail_color = 'white'
+thumbnail_color = 'white' # thumbnail 색상 초기값
 
 url_frame_list = []
 # ================================================================================
@@ -61,16 +61,22 @@ def load_data():
 
         print(workbook)
 # ================================================================================
+'''
+thumbnail 테두리에 들어갈 색상 값을 가져오는 함수
+'''
 def color_segmented_button_callback(value):
     global thumbnail_color
     thumbnail_color = value.strip()
 # ================================================================================
+'''
+제품 주소가 중복되는지 확인하고, 목록에 추가하는 함수
+'''
 def check_duplicates_and_add_URL():
     amazon_iherb_value = amazon_iherb_option_var.get()
 
     if amazon_iherb_value == "amazon":
         amazon_url = url_entry.get().strip()
-        wb = openpyxl.load_workbook("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx")
+        wb = openpyxl.load_workbook("./product_list.xlsx")
         sheet = wb['amazon']
         product_list_amazon_urls = []
         for row in sheet.iter_rows(min_row=2, min_col=4, max_col=4):
@@ -78,35 +84,35 @@ def check_duplicates_and_add_URL():
 
         log_textbox.delete("0.0", ctk.END)
         if amazon_url in product_list_amazon_urls:
-            answer = "Warning! duplicate URL found."
+            answer = "[경고] 중복되는 제품 주소가 존재합니다!"
             log_textbox.insert("0.0", answer)
         else:
-            answer = "Success."
+            answer = "제품 주소가 추가되었습니다."
             log_textbox.insert("0.0", answer)
 
-            amazon_urls.append(amazon_url)
+            amazon_urls.append(amazon_url) # <--- 입력된 주소가 배열(amazon_urls)에 저장됩니다!
             print(amazon_urls)
 
-            # url frame
-            url_frame = ctk.CTkFrame(url_scrollable_frame)
+            # 제품 주소 = frame
+            url_frame = ctk.CTkFrame(url_scrollable_frame, font=font_style)
             url_frame.pack(fill="x", pady=(5,0))
 
-            # delete button
-            delete_button = ctk.CTkButton(url_frame, text="delete", width=50, fg_color="#CC3D3D", hover_color="#960707", 
+            # 삭제 = button
+            delete_button = ctk.CTkButton(url_frame, text="삭제", width=50, fg_color="#CC3D3D", hover_color="#960707", 
                                 command=lambda frame=url_frame, url=amazon_url: 
-                                (amazon_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "Delete complete."), frame.destroy()))
+                                (amazon_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "삭제 완료"), frame.destroy()))
             delete_button.pack(side="left", padx=5, pady=5)
 
-            # asin code
+            # 제품 번호(asin_code) = button
             asin_code = re.search(r"dp\/([A-Z0-9]{10})\/", amazon_url).group(1)
             asin_code_button = ctk.CTkButton(url_frame, text=f"{asin_code}", width=50)
             asin_code_button.pack(side="left", pady=5)
 
-            # url label
+            # 제품 주소 = label
             label = ctk.CTkLabel(url_frame, text=amazon_url)
             label.pack(side="left", padx=5, pady=5, anchor="center")
 
-            return amazon_urls
+            return amazon_urls # <--- 제품 주소들이 누적된 배열을 반환합니다!
 
     else:
         iherb_url = url_entry.get().strip()
@@ -118,32 +124,36 @@ def check_duplicates_and_add_URL():
 
         log_textbox.delete("0.0", ctk.END)
         if iherb_url in product_list_iherb_urls:
-            answer = "Warning! duplicate URL found."
+            answer = "[경고] 중복되는 제품 주소가 존재합니다!"
             log_textbox.insert("0.0", answer)
         else:
-            answer = "Success!"
+            answer = "제품 주소가 추가되었습니다."
             log_textbox.insert("0.0", answer)
 
-            iherb_urls.append(iherb_url)
-            # print(iherb_urls)
+            iherb_urls.append(iherb_url) # <--- 입력된 주소가 배열(amazon_urls)에 저장됩니다!
+            print(iherb_urls)
 
+            # 제품 주소 = frame
             url_frame = ctk.CTkFrame(url_scrollable_frame)
             url_frame.pack(fill="x", pady=(5,0))
 
-            delete_button = ctk.CTkButton(url_frame, text="delete", width=50, fg_color="#CC3D3D", hover_color="#960707", 
+            # 삭제 = button
+            delete_button = ctk.CTkButton(url_frame, text="삭제", width=50, fg_color="#CC3D3D", hover_color="#960707", 
                                 command=lambda frame=url_frame, url=iherb_url: 
-                                (iherb_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "Delete complete."), frame.destroy()))
+                                (iherb_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "삭제 완료"), frame.destroy()))
             delete_button.pack(side="left", padx=5, pady=5)
 
+            # 제품 번호(product_id) = button
             product_id = iherb_url.rsplit('/', 1)[-1].replace("?rec=home", "")
             # product_id = re.search(r"/(\d+)$", iherb_url).group(1)
             product_id_button = ctk.CTkButton(url_frame, text=f"{product_id}", width=50)
             product_id_button.pack(side="left", pady=5)
 
+            # 제품 주소 = label
             label = ctk.CTkLabel(url_frame, text=iherb_url)
             label.pack(side="left", padx=5, pady=5)
 
-            return iherb_urls
+            return iherb_urls # <--- 제품 주소들이 누적된 배열을 반환합니다!
 # ================================================================================
 def images_and_ingredients():
     amazon_iherb_value = amazon_iherb_option_var.get()
@@ -473,9 +483,9 @@ def images_and_ingredients():
                 import numpy as np
 
                 if not isinstance(value, float) or not np.isnan(value):
-                    name_lable.configure(text="의심되는 성분이 존재합니다!")
+                    warning_value_lable.configure(text="의심되는 성분이 존재합니다!")
                 else:
-                    name_lable.configure(text="금지성분이 발견되지 않았습니다.")
+                    warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
             def asin_code_button_click(image_path):
                 # 제품 사진
@@ -872,9 +882,9 @@ def images_and_ingredients():
                 import numpy as np
 
                 if not isinstance(iherb_value, float) or not np.isnan(iherb_value):
-                    name_lable.configure(text="의심되는 성분이 존재합니다!")
+                    warning_value_lable.configure(text="의심되는 성분이 존재합니다!")
                 else:
-                    name_lable.configure(text="금지성분이 발견되지 않았습니다.")
+                    warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
             def product_id_button_click(image_path):
                 # 제품 사진
@@ -941,6 +951,9 @@ def images_and_ingredients():
             label = ctk.CTkLabel(product_frame, text=product_name, font=font_style)
             label.pack(side="left", padx=5, pady=5, anchor="center")
 # ================================================================================
+'''
+excel 자료(product_list - amazon, iherb)의 비어있는 행들을 삭제하고 최종적으로 저장하는 함수
+'''
 def save_to_a_database():
     amazon_iherb_value = amazon_iherb_option_var.get()
 
@@ -976,16 +989,21 @@ def save_to_a_database():
 
         workbook.save(path)
 # ================================================================================
+'''
+제품 번호를 입력했을 때, 제품 정보와 제품 주소(URL)를 출력하는 함수 
+'''
 def search():
     amazon_iherb_value = amazon_iherb_option_var.get()
 
     if amazon_iherb_value == "amazon": 
         search_asin_code = code_entry.get()
-        search_amazon_product_list = pd.read_excel("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx", sheet_name="amazon")
+        search_amazon_product_list = pd.read_excel("./product_list.xlsx", sheet_name="amazon")
         filtered_row = search_amazon_product_list[search_amazon_product_list.iloc[:, 0] == search_asin_code]
 
-        if filtered_row is False:
-            print("해당 제품은 존재하지 않습니다!")
+        if filtered_row.empty or filtered_row is False:
+            log_textbox.delete("0.0", ctk.END)
+            log_textbox.insert("0.0", "[경고] 해당 제품은 존재하지 않습니다!")
+
         else:
             search_amazon_value = filtered_row.iloc[0, 3]
 
@@ -996,7 +1014,7 @@ def search():
 
         from PIL import Image, ImageOps
 
-        img_path=f"C:/Users/TILLIDIE/Desktop/kme/amazon/{search_asin_code}/image1.jpg"
+        img_path=f"./amazon/{search_asin_code}/image1.jpg"
         image = Image.open(img_path)
         new_image = ImageOps.pad(image, (180, 180), color='white')
         border_thickness = 10
@@ -1027,20 +1045,22 @@ def search():
         import numpy as np
 
         if not isinstance(value, float) or not np.isnan(warning_value):
-            name_lable.configure(text="의심되는 성분이 존재합니다!")
+            warning_value_lable.configure(text="의심되는 성분이 존재합니다!")
         else:
-            name_lable.configure(text="금지성분이 발견되지 않았습니다.")
+            warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
         ''''''
         code_lable.configure(text=search_asin_code)
 
     else:
         search_product_id = code_entry.get()
-        search_iherb_product_list = pd.read_excel("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx", sheet_name="iherb")
+        search_iherb_product_list = pd.read_excel("./product_list.xlsx", sheet_name="iherb")
         filtered_row = search_iherb_product_list[search_iherb_product_list.iloc[:, 0].astype(str) == str(search_product_id)]
         
-        if filtered_row.empty:
-            print("해당 제품은 존재하지 않습니다!")
+        if filtered_row.empty or filtered_row is False:
+            log_textbox.delete("0.0", ctk.END)
+            log_textbox.insert("0.0", "[경고] 해당 제품은 존재하지 않습니다!")
+
         else:
             search_iherb_value = filtered_row.iloc[0, 3]
 
@@ -1051,7 +1071,7 @@ def search():
 
         from PIL import Image, ImageOps
 
-        img_path=f"C:/Users/TILLIDIE/Desktop/kme/iherb/{search_product_id}/image1.jpg"
+        img_path=f"./iherb/{search_product_id}/image1.jpg"
         image = Image.open(img_path)
         new_image = ImageOps.pad(image, (180, 180), color='white')
         border_thickness = 10
@@ -1082,13 +1102,16 @@ def search():
         import numpy as np
 
         if not isinstance(value, float) or not np.isnan(warning_value):
-            name_lable.configure(text="의심되는 성분이 존재합니다!")
+            warning_value_lable.configure(text="의심되는 성분이 존재합니다!")
         else:
-            name_lable.configure(text="금지성분이 발견되지 않았습니다.")
+            warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
         ''''''
         code_lable.configure(text=search_product_id)
 # ================================================================================
+'''
+제품 주소를 'ctrl + c' 해주는 함수 
+'''
 def copy_URL():
     import pyperclip
 
@@ -1236,7 +1259,7 @@ product_code = ctk.CTkFrame(frame_04, height=50)
 product_code.grid(row=1, column=0, padx=(20,10), pady=(0,20), sticky="ew")
 
 # 제품 식별자 출력창 = label
-code_lable = ctk.CTkLabel(product_code, text="", font=font_style) # <--- 변수 이름 수정이 필요합니다!
+code_lable = ctk.CTkLabel(product_code, text="", font=font_style)
 code_lable.pack(padx=10, pady=10)
 
 ''''''
@@ -1245,8 +1268,8 @@ pass_fail_frame = ctk.CTkFrame(frame_04, height=50)
 pass_fail_frame.grid(row=1, column=1, padx=(10,20), pady=(0,20), sticky="ew")
 
 # 금지 성분 존재 여부 출력창 = label
-name_lable = ctk.CTkLabel(pass_fail_frame, text="", width=250, font=font_style) # <--- 변수 이름 수정이 필요합니다!
-name_lable.pack(padx=10, pady=10)
+warning_value_lable = ctk.CTkLabel(pass_fail_frame, text="", width=250, font=font_style)
+warning_value_lable.pack(padx=10, pady=10)
 
 # ================================================================================
 frame_05 = ctk.CTkFrame(root)
@@ -1266,7 +1289,7 @@ list_date_frame = ctk.CTkFrame(frame_05)
 list_date_frame.pack(side="left", fill="x", expand=True, padx=5, pady=10)
 
 # 금지 성분 최신화 = label
-list_date_lable = ctk.CTkLabel(list_date_frame, text="금지 성분 최신화. 2022 10 16", font=font_style)
+list_date_lable = ctk.CTkLabel(list_date_frame, text="금지 성분 최신화. 2022-10-16", font=font_style)
 list_date_lable.pack(padx=5)
 
 ''''''
@@ -1309,7 +1332,7 @@ search_button.pack(fill="x", expand=True, side="left", padx=5, pady=10)
 url_textbox = ctk.CTkTextbox(frame_07, width=600, height=30, font=font_style)
 url_textbox.pack(fill="x", expand=True, side="left", padx=5, pady=10)
 
-# 주소 복사 = button
+# 제품 주소 복사 = button
 copy_url_button = ctk.CTkButton(frame_07, text="제품 주소 복사", font=font_style, 
                                 command=copy_URL)
 copy_url_button.pack(fill="x", expand=True, side="left", padx=(5,20), pady=10)
