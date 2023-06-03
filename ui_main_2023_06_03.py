@@ -91,25 +91,25 @@ def check_duplicates_and_add_URL():
             log_textbox.insert("0.0", answer)
 
             amazon_urls.append(amazon_url) # <--- 입력된 주소가 배열(amazon_urls)에 저장됩니다!
-            print(amazon_urls)
+            # print(amazon_urls)
 
             # 제품 주소 = frame
-            url_frame = ctk.CTkFrame(url_scrollable_frame, font=font_style)
+            url_frame = ctk.CTkFrame(url_scrollable_frame)
             url_frame.pack(fill="x", pady=(5,0))
 
             # 삭제 = button
-            delete_button = ctk.CTkButton(url_frame, text="삭제", width=50, fg_color="#CC3D3D", hover_color="#960707", 
+            delete_button = ctk.CTkButton(url_frame, text="삭제", width=50, fg_color="#CC3D3D", hover_color="#960707", font=font_style, 
                                 command=lambda frame=url_frame, url=amazon_url: 
-                                (amazon_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "삭제 완료"), frame.destroy()))
+                                (amazon_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "삭제 완료!"), frame.destroy()))
             delete_button.pack(side="left", padx=5, pady=5)
 
             # 제품 번호(asin_code) = button
             asin_code = re.search(r"dp\/([A-Z0-9]{10})\/", amazon_url).group(1)
-            asin_code_button = ctk.CTkButton(url_frame, text=f"{asin_code}", width=50)
+            asin_code_button = ctk.CTkButton(url_frame, text=f"{asin_code}", width=50, font=font_style)
             asin_code_button.pack(side="left", pady=5)
 
             # 제품 주소 = label
-            label = ctk.CTkLabel(url_frame, text=amazon_url)
+            label = ctk.CTkLabel(url_frame, text=amazon_url, font=font_style)
             label.pack(side="left", padx=5, pady=5, anchor="center")
 
             return amazon_urls # <--- 제품 주소들이 누적된 배열을 반환합니다!
@@ -131,32 +131,39 @@ def check_duplicates_and_add_URL():
             log_textbox.insert("0.0", answer)
 
             iherb_urls.append(iherb_url) # <--- 입력된 주소가 배열(amazon_urls)에 저장됩니다!
-            print(iherb_urls)
+            # print(iherb_urls)
 
             # 제품 주소 = frame
             url_frame = ctk.CTkFrame(url_scrollable_frame)
             url_frame.pack(fill="x", pady=(5,0))
 
             # 삭제 = button
-            delete_button = ctk.CTkButton(url_frame, text="삭제", width=50, fg_color="#CC3D3D", hover_color="#960707", 
+            delete_button = ctk.CTkButton(url_frame, text="삭제", width=50, fg_color="#CC3D3D", hover_color="#960707", font=font_style, 
                                 command=lambda frame=url_frame, url=iherb_url: 
-                                (iherb_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "삭제 완료"), frame.destroy()))
+                                (iherb_urls.remove(url), log_textbox.delete("0.0", ctk.END), log_textbox.insert("0.0", "삭제 완료!"), frame.destroy()))
             delete_button.pack(side="left", padx=5, pady=5)
 
             # 제품 번호(product_id) = button
             product_id = iherb_url.rsplit('/', 1)[-1].replace("?rec=home", "")
             # product_id = re.search(r"/(\d+)$", iherb_url).group(1)
-            product_id_button = ctk.CTkButton(url_frame, text=f"{product_id}", width=50)
+            product_id_button = ctk.CTkButton(url_frame, text=f"{product_id}", width=50, font=font_style)
             product_id_button.pack(side="left", pady=5)
 
             # 제품 주소 = label
-            label = ctk.CTkLabel(url_frame, text=iherb_url)
+            label = ctk.CTkLabel(url_frame, text=iherb_url, font=font_style)
             label.pack(side="left", padx=5, pady=5)
 
             return iherb_urls # <--- 제품 주소들이 누적된 배열을 반환합니다!
 # ================================================================================
+'''
+제품 사진을 수집하고, 금지 성분을 확인하는 함수 [iherb 수정이 필요합니다!]
+'''
 def images_and_ingredients():
     amazon_iherb_value = amazon_iherb_option_var.get()
+
+    log_textbox.delete("0.0", ctk.END)
+    answer = "처리 중입니다. 여유롭게 기다려주세요!"
+    log_textbox.insert("0.0", answer)
 
     if amazon_iherb_value == "amazon":
 
@@ -172,188 +179,188 @@ def images_and_ingredients():
 
         from selenium.webdriver.common.by import By
         import time
-# =====
 
-        '''
-
-        # amazon sign-in 접속
+        '''''''''''''''''''''''''''
+        아마존 sign-in
+        '''''''''''''''''''''''''''
+        # 아마존 'sign-in'에 접속합니다.
         driver.get('https://www.amazon.com/-/ko/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2F%3Flanguage%3Dko_KR%26ref_%3Dnav_ya_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=usflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&')
 
-        # 전체화면으로 실행 (전체화면으로 실행해야 오류가 적음)
-        driver.maximize_window()
+        # # 전체화면으로 실행합니다. 전체화면으로 실행해야 오류가 발생할 확률이 낮아집니다!
+        # driver.maximize_window()
 
-        # e-mail, password 입력
-        driver.find_element(By.CSS_SELECTOR, '#ap_email').send_keys('01099181244')
+        # 아마존 id, password를 입력합니다.
+        time.sleep(0.5)
+        driver.find_element(By.CSS_SELECTOR, '#ap_email').send_keys(id_entry.get())
         time.sleep(1)
         driver.find_element(By.CSS_SELECTOR, '#continue').click()
 
-        driver.find_element(By.CSS_SELECTOR, '#ap_password').send_keys('30tp100djr1595')
+        time.sleep(0.5)
+        driver.find_element(By.CSS_SELECTOR, '#ap_password').send_keys(password_entry.get())
         time.sleep(1)
         driver.find_element(By.CSS_SELECTOR, '#signInSubmit').click()
 
-        '''
-
-        for url in amazon_urls:
+        for url in amazon_urls: # <--- 'check_duplicates_and_add_URL()' 함수에서 반환된 배열입니다.
             '''''''''''''''''''''''''''
-            product image scraper
+            제품 사진 수집 (반복문)
             '''''''''''''''''''''''''''
-            # 해당 상품 주소로 이동
+            # 해당 상품 주소로 이동합니다.
             time.sleep(1)
             driver.get(url)
 
-            # 상품 이름 추출
+            # 상품의 이름을 추출합니다.
             product_name = driver.find_element(By.CSS_SELECTOR, "#productTitle").text
 
-            # ASIN CODE 추출
+            # 상품의 'asin_code'를 추출합니다.
             import re 
-# =====
+
             pattern = r'dp\/([A-Z0-9]{10})\/'
             asin_code = re.search(pattern, url).group(1)
             # print(asin_code)
 
             import os
-# =====
-            # 바탕화면에 있는 'kme' folder 안에 있는 'amazon' folder 안에 folder 만들기
-            desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "kme", "amazon")
+
+            # 'amazon' folder 안에 이름이 'asin_code'인 folder를 생성합니다.
             folder_name = f"{asin_code}"
-            folder_path = os.path.join(desktop_path, folder_name)
+            folder_path = os.path.join("amazon", folder_name)
             os.makedirs(folder_path, exist_ok=True)
             print(f"{asin_code} # folder created!")
 
-            # 상품 사진 확대
+            # 상품 사진을 click해서 확대창을 띄웁니다.
             driver.find_element(By.CSS_SELECTOR, '#imgTagWrapperId').click()
             time.sleep(1)
 
             import requests
             from selenium.common.exceptions import NoSuchElementException
             from PIL import Image, ImageOps
-# =====
+
             num_a = 0
+            
             while True:
-                css_selector = f"#ivImage_{num_a} > div"
+                css_selector = f"#ivImage_{num_a} > div" # <--- 해당 제품의 모든 사진(동영상 제외)을 수집합니다.
                 try:
-                    # 사진 선택
+                    # 수집할 사진을 선택합니다.
                     driver.find_element(By.CSS_SELECTOR, css_selector).click()
 
-                    # 선택한 사진 주소 추출
-                    time.sleep(1)
+                    # 선택한 사진의 주소를 추출합니다.
+                    time.sleep(2)
                     image_url = driver.find_element(By.CSS_SELECTOR, '#ivLargeImage > img').get_attribute('src')
 
-                    # 사진 원본 저장
+                    # 사진(원본)을 저장합니다.
                     response = requests.get(image_url)
                     filename = f"image{num_a + 1}.jpg"
                     print(image_url)
-                    with open(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/{filename}", 'wb+') as f:
+                    with open(f"./amazon/{asin_code}/{filename}", 'wb+') as f:
                         f.write(response.content)
                     print(f"{num_a + 1} # save complete!")
 
-                    # 사진 열기
-                    image = Image.open(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/{filename}")
+                    # 가공할 사진을 불러옵니다.
+                    image = Image.open(f"./amazon/{asin_code}/{filename}")
 
-                    if naver_checkbox.get():
-                        desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "kme", "amazon", f"{asin_code}")
+                    '''''''''''''''''''''''''''
+                    사진 가공 (네이버)
+                    '''''''''''''''''''''''''''
+                    if naver_checkbox.get(): # <--- 네이버가 선택되었을 경우입니다!
                         folder_name = "naver(1000, 860)"
-                        folder_path = os.path.join(desktop_path, folder_name)
+                        folder_path = os.path.join(f"amazon/{asin_code}", folder_name)
                         os.makedirs(folder_path, exist_ok=True)
-                        # print("# naver folder created!")
 
-                        # 사진 크기 조정 및 부족한 부분 흰색으로 채우기
+                        # 사진 크기를 조정하고, 부족한 부분을 흰색으로 채웁니다.
                         new_image = ImageOps.pad(image, (820, 820), color='white')
 
-                        # 흰색 테두리 두께 설정 (위, 아래 20씩)
+                        # 흰색 테두리의 두께를 설정합니다. (위, 아래 20)
                         border_thickness = 20
 
-                        # 테두리 두께 적용해서 사진 확장 (860x860)
+                        # 위에서 설정한 두께를 적용해서 사진 확장을 확장합니다. (860x860)
                         image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
 
-                        # 가공한 사진 저장
-                        image_with_border.save(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/naver(1000, 860)/{filename}")
+                        # 가공한 사진을 저장합니다.
+                        image_with_border.save(f"./amazon/{asin_code}/naver(1000, 860)/{filename}")
                         print(f"{num_a + 1} # retouch(naver) complete!")
 
                         '''''''''''''''''''''''''''
-                        create thumbnail
+                        thumbnail 생성 (네이버)
                         '''''''''''''''''''''''''''
-                        thumbnail_path_naver = f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/naver(1000, 860)/naver_thumbnail.jpg"
+                        thumbnail_path_naver = f"./amazon/{asin_code}/naver(1000, 860)/naver_thumbnail.jpg"
 
                         if not os.path.exists(thumbnail_path_naver):
-                            # thumbnail 적용할 사진 불러오기
-                            image = Image.open(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/naver(1000, 860)/image1.jpg")
+                            # thumbnail로 만들 사진을 불러옵니다.
+                            image = Image.open(f"./amazon/{asin_code}/naver(1000, 860)/image1.jpg")
 
-                            # 사진 크기 조정 및 부족한 부분 흰색으로 채우기
+                            # 사진 크기 조정하고, 부족한 부분 흰색으로 채웁니다.
                             new_image = ImageOps.pad(image, (960, 960), color='white')
 
-                            # 흰색 테두리 두께 설정
+                            # 흰색 테두리의 두께를 설정합니다. (위, 아래 10)
                             border_thickness = 10
 
-                            # 테두리 두께 적용해서 사진 확장하기
+                            # 위에서 설정한 두께를 적용해서 사진 확장을 확장합니다. (980x980)
                             image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
 
-                            # 색상 테두리 두께 설정
+                            # 색상 테두리의 두께를 설정합니다. (위, 아래 10)
                             border_thickness = 10
 
-                            # 테두리 색상 설정
+                            # 테두리 색상을 설정합니다.
                             border_color = thumbnail_color
-                            # print(border_color)
 
-                            # 테두리 색상과 두께 적용해서 사진 확장하기
+                            # 위에서 설정한 색상 두께를 적용해서 사진 확장을 확장합니다. (1000x1000)
                             thumbnail_image_for_naver = ImageOps.expand(image_with_border, border=border_thickness, fill=border_color)
 
-                            # thumbnail 저장하기
-                            thumbnail_image_for_naver.save(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/naver(1000, 860)/naver_thumbnail.jpg")
+                            # thumbnail을 저장합니다.
+                            thumbnail_image_for_naver.save(f"./amazon/{asin_code}/naver(1000, 860)/naver_thumbnail.jpg")
                             print("= naver_thumbnail created!")
                         else:
                             pass
 
-                    if coupang_checkbox.get():
-                        desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "kme", "amazon", f"{asin_code}")
+                    '''''''''''''''''''''''''''
+                    사진 가공 (쿠팡)
+                    '''''''''''''''''''''''''''
+                    if coupang_checkbox.get(): # <--- 쿠팡이 선택되었을 경우입니다!
                         folder_name = "coupang(500, 780)"
-                        folder_path = os.path.join(desktop_path, folder_name)
+                        folder_path = os.path.join(f"amazon/{asin_code}", folder_name)
                         os.makedirs(folder_path, exist_ok=True)
-                        # print("# coupang folder created!")
 
-                        # 사진 크기 조정 및 부족한 부분 흰색으로 채우기
+                        # 사진 크기를 조정하고, 부족한 부분을 흰색으로 채웁니다.
                         new_image = ImageOps.pad(image, (740, 740), color='white')
 
-                        # 흰색 테두리 두께 설정 (위, 아래 20씩)
+                        # 흰색 테두리의 두께를 설정합니다. (위, 아래 20)
                         border_thickness = 20
 
-                        # 테두리 두께 적용해서 사진 확장 (780x780)
+                        # 위에서 설정한 두께를 적용해서 사진 확장을 확장합니다. (780x780)
                         image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
 
-                        # 가공한 사진 저장
-                        image_with_border.save(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/coupang(500, 780)/{filename}")
+                        # 가공한 사진을 저장합니다.
+                        image_with_border.save(f"./amazon/{asin_code}/coupang(500, 780)/{filename}")
                         print(f"{num_a + 1} # retouch(coupang) complete!")
 
                         '''''''''''''''''''''''''''
-                        create thumbnail
+                        thumbnail 생성 (쿠팡)
                         '''''''''''''''''''''''''''
-                        thumbnail_path_coupang = f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/coupang(500, 780)/coupang_thumbnail.jpg"
+                        thumbnail_path_coupang = f"./amazon/{asin_code}/coupang(500, 780)/coupang_thumbnail.jpg"
 
                         if not os.path.exists(thumbnail_path_coupang):
-                            # thumbnail 적용할 사진 불러오기
-                            image = Image.open(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/coupang(500, 780)/image1.jpg")
+                            # thumbnail로 만들 사진을 불러옵니다.
+                            image = Image.open(f"./amazon/{asin_code}/coupang(500, 780)/image1.jpg")
 
-                            # 사진 크기 조정 및 부족한 부분 흰색으로 채우기
+                            # 사진 크기 조정하고, 부족한 부분 흰색으로 채웁니다.
                             new_image = ImageOps.pad(image, (460, 460), color='white')
 
-                            # 흰색 테두리 두께 설정
+                            # 흰색 테두리의 두께를 설정합니다. (위, 아래 10)
                             border_thickness = 10
 
-                            # 테두리 두께 적용해서 사진 확장하기
+                            # 위에서 설정한 두께를 적용해서 사진 확장을 확장합니다. (480x480)
                             image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
 
-                            # 색상 테두리 두께 설정
+                            # 색상 테두리의 두께를 설정합니다. (위, 아래 10)
                             border_thickness = 10
 
-                            # 테두리 색상 설정
+                            # 테두리 색상을 설정합니다.
                             border_color = thumbnail_color
-                            # print(border_color)
 
-                            # 테두리 색상과 두께 적용해서 사진 확장하기
+                            # 위에서 설정한 색상 두께를 적용해서 사진 확장을 확장합니다. (500x500)
                             thumbnail_image_for_coupang = ImageOps.expand(image_with_border, border=border_thickness, fill=border_color)
 
-                            # thumbnail 저장하기
-                            thumbnail_image_for_coupang.save(f"C:/Users/{os.getlogin()}/Desktop/kme/amazon/{asin_code}/coupang(500, 780)/coupang_thumbnail.jpg")
+                            # thumbnail을 저장합니다.
+                            thumbnail_image_for_coupang.save(f"./amazon/{asin_code}/coupang(500, 780)/coupang_thumbnail.jpg")
                             print("= coupang_thumbnail created!")
                         else:
                             pass
@@ -363,9 +370,12 @@ def images_and_ingredients():
                     num_a = num_a + 1
 
                 except NoSuchElementException:
-                    print("----- no more image exist -----")
+                    print("<----- no more image ----->")
                     break
 
+            '''''''''''''''''''''''''''
+            제품 사진 확대창 닫기
+            '''''''''''''''''''''''''''
             time.sleep(0.5)
             for num_close in range(0, 10):
                 css_selector = f"#a-popover-{num_close} > div > header > button"
@@ -376,61 +386,65 @@ def images_and_ingredients():
                     # print(f"element not found for {css_selector}")
                     
             log_textbox.delete("0.0", ctk.END)
-            log_textbox.insert("0.0", "Image saved.")
+            log_textbox.insert("0.0", "모든 사진이 정상적으로 저장되었습니다.")
 
             '''''''''''''''''''''''''''
-            amazon OCR
+            아마존 OCR
             '''''''''''''''''''''''''''
             import pytesseract
-# =====     
-            warnings = []  # 누적해서 저장할 목록을 담을 변수
+    
+            warnings = [] # 의심되는 금지 성분이 누적되서 저장될 빈 배열을 선언합니다.
 
-            for num_a in range(10):
-                img_path = f"C:/Users/TILLIDIE/Desktop/kme/amazon/{asin_code}/image{num_a + 1}.jpg"
+            num_a = 0
+
+            while os.path.exists(f"./amazon/{asin_code}/image{num_a + 1}.jpg"):
+        
+                ocr_text = pytesseract.image_to_string(Image.open(f"./amazon/{asin_code}/image{num_a + 1}.jpg"), lang='eng')
                 
-                if not os.path.exists(img_path):
-                    # 사진이 존재하지 않으면 다음 순회로 건너뛰기
-                    continue
-                
-                ocr_text = pytesseract.image_to_string(Image.open(img_path), lang='eng')
-                
-                with open('C:/Users/TILLIDIE/Desktop/kme/2022.10.16.txt', 'r') as f:
+                with open('./2022.10.16.txt', 'r') as f:
                     word_list = [line.strip() for line in f.readlines() if line.strip()]
                 
                 for word in word_list:
                     if word.lower() in ocr_text.lower():
                         ocr_words = ocr_text.split()
+
                         found = False
+
                         for ocr_word in ocr_words:
                             if word.lower() in ocr_word.lower():
                                 ocr_word = ocr_word.replace("(", "").replace(")", "").replace(".", "").replace(",", "")
-                                # warning_message = f"----- warning! [ {ocr_word} ] # {word} ----- from image{num_a + 1}"
                                 warning_message = f"[ {ocr_word} ] # {word}"
                                 warning_message = warning_message.replace("?", "").replace("_", "")
-                                # 이전에 추가된 warning_message와 중복되는지 확인
-                                if warning_message not in warnings:
-                                    # 목록을 누적하여 저장
-                                    warnings.append(warning_message)
+                                
+                                if warning_message not in warnings: # <--- 이전에 추가된 'warning_message'와 중복되지 않는다면,
+                                    warnings.append(warning_message) # <--- 배열에 누적해서 저장합니다.
+
                                 found = True
+
                         if not found:
                             pass
 
-            # 저장된 목록 출력 (금지성분이 발견되지 않은 사진은 표시되지 않음)
-            print(f"\n{warnings}\n")
+                num_a += 1
 
-            # excel에 저장할 수 있도록 list를 문자열로 변환
+            # 저장된 의심되는 금지 성분 목록(배열)을 출력합니다. 금지 성분이 발견되지 않은 사진은 표시되지 않습니다.
+            # print(f"\n{warnings}\n")
+
+            # Excel에 저장할 수 있도록 list를 문자열로 변환합니다.
             warnings_string = "\n".join(warnings)
 
+            log_textbox.delete("0.0", ctk.END)
+            log_textbox.insert("0.0", "금지 성분 검사가 완료되었습니다.")
+
             '''''''''''''''''''''''''''
-            Insert row into Excel sheet
+            Excel에 제품 정보 저장
             '''''''''''''''''''''''''''
             path = "C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx"
             workbook = openpyxl.load_workbook(path)
             sheet = workbook["amazon"]
 
-            # 비어있는 행 식별 및 삭제
+            # 비어있는 행을 식별하고, 삭제합니다.
             empty_rows = []
-            for row in sheet.iter_rows(min_row=2): # 첫 번째 행은 제목이므로 제외
+            for row in sheet.iter_rows(min_row=2): # 첫 번째 행은 제목이므로 제외합니다.
                 if all(cell.value is None for cell in row):
                     empty_rows.append(row)
 
@@ -439,15 +453,15 @@ def images_and_ingredients():
 
             row_values = [asin_code, product_name, warnings_string, url]
 
-            print(row_values)
+            print(row_values[0], row_values[1], row_values[2])
 
             sheet.append(row_values)
             workbook.save(path)
 
             '''''''''''''''''''''''''''
-            create product frame
+            제품 정보 frame 생성
             '''''''''''''''''''''''''''
-            def display_image(image_path):
+            def display_image(image_path): # <--- 제품 사진을 출력합니다.
                 image = Image.open(image_path)
                 new_image = ImageOps.pad(image, (180, 180), color='white')
                 border_thickness = 10
@@ -456,9 +470,9 @@ def images_and_ingredients():
                 product_image_canvas.create_image(100, 100, anchor="center", image=photo)
                 product_image_canvas.image = photo
 
-            def warnings_string_textbox(image_path):
+            def warnings_string_textbox(image_path): # <--- 의심되는 금지 성분을 출력합니다.
                 asin_code = image_path.split("/")[-2]
-                product_list = pd.read_excel("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx", sheet_name="amazon")
+                product_list = pd.read_excel("./product_list.xlsx", sheet_name="amazon")
                 filtered_row = product_list[product_list.iloc[:, 0] == asin_code]
                 value = filtered_row.iloc[0, 2]
                 
@@ -471,12 +485,12 @@ def images_and_ingredients():
                     ingredients_textbox.delete("0.0", ctk.END)
                     ingredients_textbox.insert("0.0", "")
 
-            def warning_label(image_path):
+            def warning_label(image_path): # <--- 금지 성분 존재 여부를 출력합니다.
                 asin_code = image_path.split("/")[-2]
 
                 print('asin_code_button_click ' + asin_code)
 
-                product_list = pd.read_excel("C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx", sheet_name="amazon")
+                product_list = pd.read_excel("./product_list.xlsx", sheet_name="amazon")
                 filtered_row = product_list[product_list.iloc[:, 0] == asin_code]
                 value = filtered_row.iloc[0, 2]
 
@@ -487,33 +501,33 @@ def images_and_ingredients():
                 else:
                     warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
-            def asin_code_button_click(image_path):
+            def asin_code_button_click(image_path): # <--- 'asin_code_button'이 click되었을 때 실행됩니다.
                 # 제품 사진
                 display_image(image_path)
                 # 금지 성분
                 warnings_string_textbox(image_path)
                 # 제품 번호
                 code_lable.configure(text=image_path.split("/")[-2])
-                # 경고 문구
+                # 금지 성분 존재 여부
                 warning_label(image_path)
 
-            def pass_button_click(image_path, frame):
+            def pass_button_click(image_path, frame): # <--- 'pass_button'이 click되었을 때 실행됩니다.
                 asin_code = image_path.split("/")[-2]
 
                 print('pass_button_click ' + asin_code)
 
                 frame.configure(fg_color="#217346")
 
-            def fail_button_click(image_path, frame):
+            def fail_button_click(image_path, frame): # <--- 'fail_button'이 click되었을 때 실행됩니다.
                 asin_code = image_path.split("/")[-2]
 
                 print('fail_button_click ' + asin_code)
 
                 log_textbox.delete("0.0", ctk.END)
-                log_textbox.insert("0.0", "Delete complete.")
+                log_textbox.insert("0.0", "삭제 완료!")
                 frame.destroy()
 
-                path = "C:/Users/TILLIDIE/Desktop/kme/product_list.xlsx"
+                path = "./product_list.xlsx"
                 wb = openpyxl.load_workbook(path)
                 sheet = wb["amazon"]
 
@@ -524,43 +538,46 @@ def images_and_ingredients():
 
                 wb.save(path)
 
-            # product frame
+            # 제품 정보 = frame
             product_frame = ctk.CTkFrame(scrollable_frame)
             product_frame.pack(fill="x", pady=(5,0))
 
-            # asin code
-            asin_code_button = ctk.CTkButton(product_frame, text=f"{asin_code}", width=50, 
-                                             command=lambda img_path=f"C:/Users/TILLIDIE/Desktop/kme/amazon/{asin_code}/image1.jpg": 
-                                             asin_code_button_click(img_path))
+            # 제품 번호(asin_code) = button
+            asin_code_button = ctk.CTkButton(product_frame, text=f"{asin_code}", width=50, font=font_style, 
+                command=lambda img_path=f"./amazon/{asin_code}/image1.jpg": 
+                asin_code_button_click(img_path))
             asin_code_button.pack(side="left", padx=(5,0), pady=5)
 
-            # pass button
-            pass_button = ctk.CTkButton(product_frame, text="pass", width=50, fg_color="#217346", hover_color="#005000", 
-                                        command=lambda img_path=f"C:/Users/TILLIDIE/Desktop/kme/amazon/{asin_code}/image1.jpg", 
-                                        frame=product_frame: 
-                                        pass_button_click(img_path, frame))
+            # 합격 = button
+            pass_button = ctk.CTkButton(product_frame, text="pass", width=50, fg_color="#217346", hover_color="#005000", font=font_style, 
+                command=lambda img_path=f"./amazon/{asin_code}/image1.jpg", 
+                frame=product_frame: 
+                pass_button_click(img_path, frame))
             pass_button.pack(side="left", padx=5, pady=5)
 
-            # fail button
-            fail_button = ctk.CTkButton(product_frame, text="fail", width=50, fg_color="#CC3D3D", hover_color="#960707", 
-                                        command=lambda img_path=f"C:/Users/TILLIDIE/Desktop/kme/amazon/{asin_code}/image1.jpg", 
-                                        frame=product_frame: 
-                                        fail_button_click(img_path, frame))
+            # 불합격 = button
+            fail_button = ctk.CTkButton(product_frame, text="fail", width=50, fg_color="#CC3D3D", hover_color="#960707", font=font_style,
+                command=lambda img_path=f"./amazon/{asin_code}/image1.jpg", 
+                frame=product_frame: 
+                fail_button_click(img_path, frame))
             fail_button.pack(side="left", pady=5)
 
-            # product name label
-            label = ctk.CTkLabel(product_frame, text=product_name)
+            # 제품명 = label
+            label = ctk.CTkLabel(product_frame, text=product_name, font=font_style)
             label.pack(side="left", padx=5, pady=5, anchor="center")
 
-        # web browser 종료
+        # web browser를 종료합니다.
         driver.quit()
+
+        log_textbox.delete("0.0", ctk.END)
+        log_textbox.insert("0.0", "모든 기능이 정상적으로 실행 완료되었습니다!")
 
     else :
 
         import os
         import requests
         from bs4 import BeautifulSoup
-# =====
+
         ''''''
 
         for url in iherb_urls:
@@ -569,7 +586,7 @@ def images_and_ingredients():
             '''''''''''''''''''''''''''
             # PRODUCT ID 추출
             import re
-# =====     
+    
             product_id = url.rsplit('/', 1)[-1].replace("?rec=home", "")
             # product_id = re.search(r"/(\d+)$", url).group(1)
             print(f"----- PRODUCT ID : {product_id} -----\n")
@@ -962,9 +979,9 @@ def save_to_a_database():
         workbook = openpyxl.load_workbook(path)
         sheet = workbook["amazon"]
 
-        # 비어있는 행 식별 및 삭제
+        # 비어있는 행을 식별하고, 삭제합니다.
         empty_rows = []
-        for row in sheet.iter_rows(min_row=2): # 첫 번째 행은 제목이므로 제외
+        for row in sheet.iter_rows(min_row=2): # 첫 번째 행은 제목이므로 제외합니다.
             if all(cell.value is None for cell in row):
                 empty_rows.append(row)
 
@@ -978,9 +995,9 @@ def save_to_a_database():
         workbook = openpyxl.load_workbook(path)
         sheet = workbook["iherb"]
 
-        # 비어있는 행 식별 및 삭제
+        # 비어있는 행을 식별하고, 삭제합니다.
         empty_rows = []
-        for row in sheet.iter_rows(min_row=2): # 첫 번째 행은 제목이므로 제외
+        for row in sheet.iter_rows(min_row=2): # 첫 번째 행은 제목이므로 제외합니다.
             if all(cell.value is None for cell in row):
                 empty_rows.append(row)
 
@@ -988,6 +1005,8 @@ def save_to_a_database():
             sheet.delete_rows(row[0].row)
 
         workbook.save(path)
+
+    root.destroy()
 # ================================================================================
 '''
 제품 번호를 입력했을 때, 제품 정보와 제품 주소(URL)를 출력하는 함수 
@@ -1154,10 +1173,10 @@ option_frame.pack(side="left", fill="both", expand=True, padx=(20,10), pady=20)
 amazon_iherb_option_var = ctk.StringVar(value="amazon") # <--- 분기점의 시초가 되는 중요한 변수입니다!
 
 amazon_radiobutton = ctk.CTkRadioButton(option_frame, text=" 아마존", fg_color="#EDD200", 
-                                        variable=amazon_iherb_option_var, value="amazon", font=font_style)
+                variable=amazon_iherb_option_var, value="amazon", font=font_style)
 amazon_radiobutton.pack(side="top", fill="both", expand=True, padx=20, pady=(20,5))
 iherb_radiobutton = ctk.CTkRadioButton(option_frame, text=" 아이허브", fg_color="#22741C", 
-                                       variable=amazon_iherb_option_var, value="iherb", font=font_style)
+                variable=amazon_iherb_option_var, value="iherb", font=font_style)
 iherb_radiobutton.pack(side="bottom", fill="both", expand=True, padx=20, pady=(5,20))
 
 ''''''
@@ -1170,8 +1189,8 @@ id_entry = ctk.CTkEntry(entry_frame, placeholder_text=" Mobile phone number or e
 id_entry.pack(fill="x", expand=True, side="top", padx=20, pady=(20,5))
 
 # Password = entry
-pw_entry = ctk.CTkEntry(entry_frame, placeholder_text=" Password", font=font_style) # <--- 입력창
-pw_entry.pack(fill="x", expand=True, side="bottom", padx=20, pady=(5,20))
+password_entry = ctk.CTkEntry(entry_frame, placeholder_text=" Password", font=font_style) # <--- 입력창
+password_entry.pack(fill="x", expand=True, side="bottom", padx=20, pady=(5,20))
 
 # ================================================================================
 frame_02 = ctk.CTkFrame(root)
@@ -1195,9 +1214,9 @@ border_frame.pack(side="top", fill="both", expand=True, padx=20, pady=(0,20))
 
 # 색상 결정 = segemented button
 color_segemented_button = ctk.CTkSegmentedButton(border_frame, font=font_style, 
-                                                 values=[" 하양 ", " 빨강 ", " 주황 ", " 노랑 ", " 초록 ", " 파랑 ", " 보라 "], 
-                                                 command=color_segmented_button_callback)
-color_segemented_button.set(" 하양 ")
+                values=[" White ", " Red ", " Orange ", " Yellow ", " Green ", " Blue ", " Purple "], 
+                command=color_segmented_button_callback)
+color_segemented_button.set(" White ")
 color_segemented_button.pack(expand=True, padx=10, pady=10)
 
 # ================================================================================
@@ -1213,12 +1232,12 @@ url_scrollable_frame.pack(fill="y", expand=True, padx=20, pady=(5,10))
 
 # 제품 주소(URL) 중복 검사 => 목록 추가 = button
 add_button = ctk.CTkButton(frame_03, width=200, text="제품 주소 중복 검사 => 목록 추가", font=font_style,  
-                           command=check_duplicates_and_add_URL)
+                command=check_duplicates_and_add_URL)
 add_button.pack(fill="x", padx=20, pady=(0,5))
 
 # 제품 사진 수집 => 금지 성분 조사 = button
 add_button = ctk.CTkButton(frame_03, width=200, text="제품 사진 수집 => 금지 성분 조사", font=font_style,  
-                           command=images_and_ingredients)
+                command=images_and_ingredients)
 add_button.pack(fill="x", padx=20, pady=(5,20))
 
 # ================================================================================
@@ -1311,7 +1330,7 @@ scrollable_frame.pack(fill="y", expand=True, padx=20, pady=(20,10))
 
 # 모든 과정을 완료하셨다면, 눌러주세요! [ 저장 => 종료 ] = button
 save_button = ctk.CTkButton(frame_06, width=200, text="모든 과정을 완료하셨다면 눌러주세요! [ 저장 => 종료 ]", font=font_style, 
-                            command=save_to_a_database)
+                command=save_to_a_database)
 save_button.pack(fill="x", padx=20, pady=(0,20))
 
 # ================================================================================
@@ -1325,7 +1344,7 @@ code_entry.pack(fill="x", expand=True, side="left", padx=(20,5), pady=10)
 
 # 검색 = button
 search_button = ctk.CTkButton(frame_07, text="검색", font=font_style, 
-                              command=search)
+                command=search)
 search_button.pack(fill="x", expand=True, side="left", padx=5, pady=10)
 
 # 제품 주소(URL) 출력창 = textbox
@@ -1334,7 +1353,7 @@ url_textbox.pack(fill="x", expand=True, side="left", padx=5, pady=10)
 
 # 제품 주소 복사 = button
 copy_url_button = ctk.CTkButton(frame_07, text="제품 주소 복사", font=font_style, 
-                                command=copy_URL)
+                command=copy_URL)
 copy_url_button.pack(fill="x", expand=True, side="left", padx=(5,20), pady=10)
 
 ''''''
