@@ -1,7 +1,7 @@
 import customtkinter as ctk # 'customtkinter'를 가져옵니다.
 import openpyxl # Excel 자료의 읽기, 쓰기, 수정 기능을 제공합니다.
 import tkinter as tk # GUI 기능을 제공합니다.
-from tkinter import ttk # theme가 적용된 일관된 모양의 widget을 제공합니다.
+from tkinter import ttk, messagebox
 import re # pattern을 사용하여 문자열을 조작하고, 그에 기반한 작업을 수행할 수 있습니다.
 from PIL import Image # 사진 객체를 만들기 위해 불러옵니다.
 from PIL import ImageTk # 'tkinter canvas'에서 사진 객체에 대한 다양한 작업을 제공합니다.
@@ -30,6 +30,13 @@ amazon_urls = [] # 입력되는 'amazon_url'을 받기 위한 빈 배열을 선�
 iherb_urls = [] # 입력되는 'iherb_url'을 받기 위한 빈 배열을 선언합니다.
 
 thumbnail_color = 'white' # thumbnail 색상 초기값
+# ================================================================================
+'''
+종료를 눌렀을 시, 사용자에게 다시 확인을 받는 함수
+'''
+def close_check():
+    if messagebox.askokcancel("경고", "정말로 종료하시겠습니까?"):
+        root.destroy()
 # ================================================================================
 '''
 출력창에 자료를 행렬로 보여주는 함수
@@ -280,7 +287,9 @@ def images_and_ingredients():
                         '''''''''''''''''''''''''''
                         thumbnail_path_naver = f"./amazon/{asin_code}/naver(1000, 860)/naver_thumbnail.jpg"
 
-                        if not os.path.exists(thumbnail_path_naver):
+                        if os.path.exists(thumbnail_path_naver):
+                            pass # <--- 제품 thumbnail이 이미 존재하는 경우, 구문을 통과합니다.
+                        else:
                             # thumbnail로 만들 사진을 불러옵니다.
                             image = Image.open(f"./amazon/{asin_code}/naver(1000, 860)/image1.jpg")
 
@@ -305,8 +314,6 @@ def images_and_ingredients():
                             # thumbnail을 저장합니다.
                             thumbnail_image_for_naver.save(f"./amazon/{asin_code}/naver(1000, 860)/naver_thumbnail.jpg")
                             print("= naver_thumbnail created!")
-                        else:
-                            pass
 
                     '''''''''''''''''''''''''''
                     사진 가공 (쿠팡)
@@ -334,7 +341,9 @@ def images_and_ingredients():
                         '''''''''''''''''''''''''''
                         thumbnail_path_coupang = f"./amazon/{asin_code}/coupang(500, 780)/coupang_thumbnail.jpg"
 
-                        if not os.path.exists(thumbnail_path_coupang):
+                        if os.path.exists(thumbnail_path_coupang):
+                            pass
+                        else:
                             # thumbnail로 만들 사진을 불러옵니다.
                             image = Image.open(f"./amazon/{asin_code}/coupang(500, 780)/image1.jpg")
 
@@ -359,10 +368,6 @@ def images_and_ingredients():
                             # thumbnail을 저장합니다.
                             thumbnail_image_for_coupang.save(f"./amazon/{asin_code}/coupang(500, 780)/coupang_thumbnail.jpg")
                             print("= coupang_thumbnail created!")
-                        else:
-                            pass
-
-                    time.sleep(0.5)
                     
                     num_a = num_a + 1
 
@@ -459,7 +464,8 @@ def images_and_ingredients():
             '''''''''''''''''''''''''''
             제품 정보 frame 생성
             '''''''''''''''''''''''''''
-            def display_image(image_path): # <--- 제품 사진을 출력합니다.
+            def display_image(asin_code_for_frame): # <--- 제품 사진을 출력합니다.
+                image_path = f"./amazon/{asin_code_for_frame}/image1.jpg"
                 image = Image.open(image_path)
                 new_image = ImageOps.pad(image, (180, 180), color='white')
                 border_thickness = 10
@@ -468,10 +474,9 @@ def images_and_ingredients():
                 product_image_canvas.create_image(100, 100, anchor="center", image=photo)
                 product_image_canvas.image = photo
 
-            def warnings_string_textbox(image_path): # <--- 의심되는 금지 성분을 출력합니다.
-                asin_code = image_path.split("/")[-2]
+            def warnings_string_textbox(asin_code_for_frame): # <--- 의심되는 금지 성분을 출력합니다.
                 product_list = pd.read_excel("./product_list.xlsx", sheet_name="amazon")
-                filtered_row = product_list[product_list.iloc[:, 0] == asin_code]
+                filtered_row = product_list[product_list.iloc[:, 0] == asin_code_for_frame]
                 value = filtered_row.iloc[0, 2]
                 
                 import numpy as np
@@ -483,13 +488,9 @@ def images_and_ingredients():
                     ingredients_textbox.delete("0.0", ctk.END)
                     ingredients_textbox.insert("0.0", "")
 
-            def warning_label(image_path): # <--- 금지 성분 존재 여부를 출력합니다.
-                asin_code = image_path.split("/")[-2]
-
-                print('asin_code_button_click ' + asin_code)
-
+            def warning_label(asin_code_for_frame): # <--- 금지 성분 존재 여부를 출력합니다.
                 product_list = pd.read_excel("./product_list.xlsx", sheet_name="amazon")
-                filtered_row = product_list[product_list.iloc[:, 0] == asin_code]
+                filtered_row = product_list[product_list.iloc[:, 0] == asin_code_for_frame]
                 value = filtered_row.iloc[0, 2]
 
                 import numpy as np
@@ -499,33 +500,30 @@ def images_and_ingredients():
                 else:
                     warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
-            def asin_code_button_click(image_path): # <--- 'asin_code_button'이 click되었을 때 실행됩니다.
+            def asin_code_button_click(asin_code_for_frame): # <--- 'asin_code_button'이 click되었을 때 실행됩니다.
+                print('asin_code_button_click ' + asin_code_for_frame)
                 # 제품 사진
-                display_image(image_path)
+                display_image(asin_code_for_frame)
                 # 금지 성분
-                warnings_string_textbox(image_path)
+                warnings_string_textbox(asin_code_for_frame)
                 # 제품 번호
-                code_lable.configure(text=image_path.split("/")[-2])
+                code_lable.configure(text=asin_code_for_frame)
                 # 금지 성분 존재 여부
-                warning_label(image_path)
+                warning_label(asin_code_for_frame)
 
-            def pass_button_click(image_path, frame): # <--- 'pass_button'이 click되었을 때 실행됩니다.
-                asin_code = image_path.split("/")[-2]
-
-                print('pass_button_click ' + asin_code)
+            def pass_button_click(asin_code_for_frame, frame): # <--- 'pass_button'이 click되었을 때 실행됩니다.
+                print('pass_button_click ' + asin_code_for_frame)
 
                 frame.configure(fg_color="#217346")
 
                 log_textbox.delete("0.0", ctk.END)
-                log_textbox.insert("0.0", f"'{asin_code}'는 합격입니다.")
+                log_textbox.insert("0.0", f"'{asin_code_for_frame}'는 합격입니다.")
 
-            def fail_button_click(image_path, frame): # <--- 'fail_button'이 click되었을 때 실행됩니다.
-                asin_code = image_path.split("/")[-2]
-
-                print('fail_button_click ' + asin_code)
+            def fail_button_click(asin_code_for_frame, frame): # <--- 'fail_button'이 click되었을 때 실행됩니다.
+                print('fail_button_click ' + asin_code_for_frame)
 
                 log_textbox.delete("0.0", ctk.END)
-                log_textbox.insert("0.0", f"'{asin_code}'는 불합격입니다!")
+                log_textbox.insert("0.0", f"'{asin_code_for_frame}'는 불합격입니다!")
                 frame.destroy()
 
                 path = "./product_list.xlsx"
@@ -533,7 +531,7 @@ def images_and_ingredients():
                 sheet = wb["amazon"]
 
                 for row in sheet.iter_rows(min_row=2, min_col=1, max_col=1):
-                    if row[0].value == asin_code:
+                    if row[0].value == asin_code_for_frame:
                         sheet.delete_rows(row[0].row)
                         break
 
@@ -545,22 +543,22 @@ def images_and_ingredients():
 
             # 제품 번호(asin_code) = button
             asin_code_button = ctk.CTkButton(product_frame, text=f"{asin_code}", width=50, font=font_style, 
-                command=lambda img_path=f"./amazon/{asin_code}/image1.jpg": 
-                asin_code_button_click(img_path))
+                command=lambda asin_code_for_frame=asin_code: 
+                asin_code_button_click(asin_code_for_frame))
             asin_code_button.pack(side="left", padx=(5,0), pady=5)
 
             # 합격 = button
             pass_button = ctk.CTkButton(product_frame, text="pass", width=50, fg_color="#217346", hover_color="#005000", font=font_style, 
-                command=lambda img_path=f"./amazon/{asin_code}/image1.jpg", 
+                command=lambda asin_code_for_frame=asin_code, 
                 frame=product_frame: 
-                pass_button_click(img_path, frame))
+                pass_button_click(asin_code_for_frame, frame))
             pass_button.pack(side="left", padx=5, pady=5)
 
             # 불합격 = button
             fail_button = ctk.CTkButton(product_frame, text="fail", width=50, fg_color="#CC3D3D", hover_color="#960707", font=font_style,
-                command=lambda img_path=f"./amazon/{asin_code}/image1.jpg", 
+                command=lambda asin_code_for_frame=asin_code, 
                 frame=product_frame: 
-                fail_button_click(img_path, frame))
+                fail_button_click(asin_code_for_frame, frame))
             fail_button.pack(side="left", pady=5)
 
             # 제품명 = label
@@ -578,7 +576,7 @@ def images_and_ingredients():
         import requests
         from bs4 import BeautifulSoup
 
-        for url in iherb_urls:
+        for url in iherb_urls: # <--- 'check_duplicates_and_add_URL()' 함수에서 반환된 배열입니다.
             '''''''''''''''''''''''''''
             제품 사진 수집 (반복문)
             '''''''''''''''''''''''''''
@@ -648,7 +646,9 @@ def images_and_ingredients():
                     '''''''''''''''''''''''''''
                     thumbnail_path_naver = f"./iherb/{product_id}/naver(1000, 860)/naver_thumbnail.jpg"
 
-                    if not os.path.exists(thumbnail_path_naver):
+                    if os.path.exists(thumbnail_path_naver):
+                        pass
+                    else:
                         # thumbnail로 만들 사진을 불러옵니다.
                         image = Image.open(f"./iherb/{product_id}/naver(1000, 860)/image1.jpg")
 
@@ -671,10 +671,8 @@ def images_and_ingredients():
                         thumbnail_image_for_naver = ImageOps.expand(image_with_border, border=border_thickness, fill=border_color)
 
                         # thumbnail을 저장합니다.
-                        thumbnail_image_for_naver.save(f"C:/Users/{os.getlogin()}/Desktop/kme/iherb/{product_id}/naver(1000, 860)/naver_thumbnail.jpg")
+                        thumbnail_image_for_naver.save(f"./iherb/{product_id}/naver(1000, 860)/naver_thumbnail.jpg")
                         print("= naver_thumbnail created!")
-                    else:
-                        pass
 
                 '''''''''''''''''''''''''''
                 사진 가공 (쿠팡)
@@ -694,17 +692,19 @@ def images_and_ingredients():
                     image_with_border = ImageOps.expand(new_image, border=border_thickness, fill='white')
 
                     # 가공한 사진을 저장합니다.
-                    image_with_border.save(f"C:/Users/{os.getlogin()}/Desktop/kme/iherb/{product_id}/coupang(500, 780)/{filename}")
+                    image_with_border.save(f"./iherb/{product_id}/coupang(500, 780)/{filename}")
                     print(f"{num_i + 1} # retouch(coupang) complete!")
 
                     '''''''''''''''''''''''''''
                     thumbnail 생성 (쿠팡)
                     '''''''''''''''''''''''''''
-                    thumbnail_path_coupang = f"C:/Users/{os.getlogin()}/Desktop/kme/iherb/{product_id}/coupang(500, 780)/coupang_thumbnail.jpg"
+                    thumbnail_path_coupang = f"./iherb/{product_id}/coupang(500, 780)/coupang_thumbnail.jpg"
 
-                    if not os.path.exists(thumbnail_path_coupang):
+                    if os.path.exists(thumbnail_path_coupang):
+                        pass
+                    else:
                         # thumbnail로 만들 사진을 불러옵니다.
-                        image = Image.open(f"C:/Users/{os.getlogin()}/Desktop/kme/iherb/{product_id}/coupang(500, 780)/image1.jpg")
+                        image = Image.open(f"./iherb/{product_id}/coupang(500, 780)/image1.jpg")
 
                         # 사진 크기를 조정하고, 부족한 부분을 흰색으로 채웁니다.
                         new_image = ImageOps.pad(image, (460, 460), color='white')
@@ -725,10 +725,8 @@ def images_and_ingredients():
                         thumbnail_image_for_coupang = ImageOps.expand(image_with_border, border=border_thickness, fill=border_color)
 
                         # thumbnail을 저장합니다.
-                        thumbnail_image_for_coupang.save(f"C:/Users/{os.getlogin()}/Desktop/kme/iherb/{product_id}/coupang(500, 780)/coupang_thumbnail.jpg")
+                        thumbnail_image_for_coupang.save(f"./iherb/{product_id}/coupang(500, 780)/coupang_thumbnail.jpg")
                         print("= coupang_thumbnail created!")
-                    else:
-                        pass
             
             log_textbox.delete("0.0", ctk.END)
             log_textbox.insert("0.0", "모든 사진이 정상적으로 저장되었습니다.")
@@ -854,7 +852,8 @@ def images_and_ingredients():
             '''''''''''''''''''''''''''
             제품 정보 frame 생성
             '''''''''''''''''''''''''''
-            def iherb_display_image(image_path): # <--- 제품 사진을 출력합니다.
+            def iherb_display_image(product_id_for_frame): # <--- 제품 사진을 출력합니다.
+                image_path = f"./iherb/{product_id_for_frame}/image1.jpg"
                 image = Image.open(image_path)
                 new_image = ImageOps.pad(image, (180, 180), color='white')
                 border_thickness = 10
@@ -863,10 +862,9 @@ def images_and_ingredients():
                 product_image_canvas.create_image(100, 100, anchor="center", image=photo)
                 product_image_canvas.image = photo
 
-            def iherb_warnings_string_textbox(image_path): # <--- 의심되는 금지 성분을 출력합니다.
-                product_id = image_path.split("/")[-2]
+            def iherb_warnings_string_textbox(product_id_for_frame): # <--- 의심되는 금지 성분을 출력합니다.
                 iherb_product_list = pd.read_excel("./product_list.xlsx", sheet_name="iherb")
-                iherb_filtered_row = iherb_product_list[iherb_product_list.iloc[:, 0].astype(str) == str(product_id)]
+                iherb_filtered_row = iherb_product_list[iherb_product_list.iloc[:, 0].astype(str) == str(product_id_for_frame)]
                 iherb_value = iherb_filtered_row.iloc[0, 2]
                 
                 import numpy as np
@@ -878,13 +876,9 @@ def images_and_ingredients():
                     ingredients_textbox.delete("0.0", ctk.END)
                     ingredients_textbox.insert("0.0", "")
 
-            def iherb_warning_label(image_path): # <--- 금지 성분 존재 여부를 출력합니다.
-                product_id = image_path.split("/")[-2]
-
-                print('product_id_button_click ' + product_id)
-
+            def iherb_warning_label(product_id_for_frame): # <--- 금지 성분 존재 여부를 출력합니다.
                 iherb_product_list = pd.read_excel("./product_list.xlsx", sheet_name="iherb")
-                iherb_filtered_row = iherb_product_list[iherb_product_list.iloc[:, 0].astype(str) == str(product_id)]
+                iherb_filtered_row = iherb_product_list[iherb_product_list.iloc[:, 0].astype(str) == str(product_id_for_frame)]
                 iherb_value = iherb_filtered_row.iloc[0, 2]
 
                 import numpy as np
@@ -894,33 +888,30 @@ def images_and_ingredients():
                 else:
                     warning_value_lable.configure(text="금지성분이 발견되지 않았습니다.")
 
-            def product_id_button_click(image_path): # <--- 'product_id_button'이 click되었을 때 실행됩니다.
+            def product_id_button_click(product_id_for_frame): # <--- 'product_id_button'이 click되었을 때 실행됩니다.
+                print('product_id_button_click ' + product_id_for_frame)
                 # 제품 사진
-                iherb_display_image(image_path)
+                iherb_display_image(product_id_for_frame)
                 # 금지 성분
-                iherb_warnings_string_textbox(image_path)
+                iherb_warnings_string_textbox(product_id_for_frame)
                 # 제품 번호
-                code_lable.configure(text=image_path.split("/")[-2])
+                code_lable.configure(text=product_id_for_frame)
                 # 금지 성분 존재 여부
-                iherb_warning_label(image_path)
+                iherb_warning_label(product_id_for_frame)
 
-            def iherb_pass_button_click(image_path, frame): # <--- 'pass_button'이 click되었을 때 실행됩니다.
-                product_id = image_path.split("/")[-2]
-
-                # print('iherb_pass_button_click ' + product_id)
+            def iherb_pass_button_click(product_id_for_frame, frame): # <--- 'pass_button'이 click되었을 때 실행됩니다.
+                print('iherb_pass_button_click ' + product_id_for_frame)
 
                 frame.configure(fg_color="#217346")
 
                 log_textbox.delete("0.0", ctk.END)
-                log_textbox.insert("0.0", f"'{product_id}'는 합격입니다.")
+                log_textbox.insert("0.0", f"'{product_id_for_frame}'는 합격입니다.")
 
-            def iherb_fail_button_click(image_path, frame): # <--- 'fail_button'이 click되었을 때 실행됩니다.
-                product_id = image_path.split("/")[-2]
-
-                # print('iherb_fail_button_click ' + product_id)
+            def iherb_fail_button_click(product_id_for_frame, frame): # <--- 'fail_button'이 click되었을 때 실행됩니다.
+                print('iherb_fail_button_click ' + product_id_for_frame)
 
                 log_textbox.delete("0.0", ctk.END)
-                log_textbox.insert("0.0", f"'{product_id}'는 불합격입니다!")
+                log_textbox.insert("0.0", f"'{product_id_for_frame}'는 불합격입니다!")
                 frame.destroy()
 
                 path = "./product_list.xlsx"
@@ -928,7 +919,7 @@ def images_and_ingredients():
                 sheet = wb["iherb"]
 
                 for row in sheet.iter_rows(min_row=2, min_col=1, max_col=1):
-                    if row[0].value == product_id:
+                    if row[0].value == product_id_for_frame:
                         sheet.delete_rows(row[0].row)
                         break
 
@@ -940,22 +931,22 @@ def images_and_ingredients():
 
             # 제품 번호(product_id) = button
             product_id_button = ctk.CTkButton(product_frame, text=f"{product_id}", width=50, font=font_style, 
-                command=lambda img_path=f"./iherb/{product_id}/image1.jpg":
-                product_id_button_click(img_path))
+                command=lambda product_id_for_frame=product_id:
+                product_id_button_click(product_id_for_frame))
             product_id_button.pack(side="left", padx=(5,0), pady=5)
 
             # 합격 = button
             pass_button = ctk.CTkButton(product_frame, text="pass", width=50, fg_color="#217346", hover_color="#005000", font=font_style, 
-                command=lambda img_path = f"./iherb/{product_id}/image1.jpg", 
+                command=lambda product_id_for_frame=product_id, 
                 frame=product_frame: 
-                iherb_pass_button_click(img_path, frame))
+                iherb_pass_button_click(product_id_for_frame, frame))
             pass_button.pack(side="left", padx=5, pady=5)
 
             # 불합격 = button
             fail_button = ctk.CTkButton(product_frame, text="fail", width=50, fg_color="#CC3D3D", hover_color="#960707", font=font_style, 
-                command=lambda img_path = f"./iherb/{product_id}/image1.jpg", 
+                command=lambda product_id_for_frame=product_id, 
                 frame=product_frame: 
-                iherb_fail_button_click(img_path, frame))
+                iherb_fail_button_click(product_id_for_frame, frame))
             fail_button.pack(side="left", pady=5)
 
             # 제품명 = label
@@ -1146,6 +1137,7 @@ def copy_URL():
 # ================================================================================
 root = ctk.CTk()
 root.title("KME Scraper")
+root.protocol("WM_DELETE_WINDOW", close_check)
 # ================================================================================
 
 ctk.set_appearance_mode("dark") # system, dark, light
