@@ -1,8 +1,9 @@
 import psutil
-import sys
 import datetime
 
+import sys
 sys.stdout.reconfigure(encoding='utf-8')
+
 # 현재 사용자의 MAC 주소를 추출하는 함수입니다.
 def get_mac_address():
     interfaces = psutil.net_if_addrs()
