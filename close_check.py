@@ -34,14 +34,14 @@ def close_toplevel(): # <--- 추가 창을 종료하는 함수입니다.
 
 def close_all(): # <--- 추가 창, 기본 창을 모두 종료하는 함수입니다.
     if toplevel_window is not None and toplevel_window.winfo_exists():
-        toplevel_window.destroy()
+        toplevel_window.destroy() # 추가 창을 종료합니다.
     root.destroy() # 기본 창을 종료합니다.
 
 root = customtkinter.CTk()
 root.geometry("400x200")
 
-button_1 = customtkinter.CTkButton(root, text="open toplevel", command=open_toplevel)
-button_1.pack(side="top", padx=10, pady=10)
+button_open = customtkinter.CTkButton(root, text="open toplevel", command=open_toplevel)
+button_open.pack(side="top", padx=10, pady=10)
 
 button_close = customtkinter.CTkButton(root, text="close toplevel", command=close_toplevel)
 button_close.pack(side="top", padx=10)
