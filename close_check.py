@@ -5,10 +5,17 @@ toplevel_window = None  # 전역 변수로 선언합니다.
 class ToplevelWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title("경고")
         self.geometry("200x100")
 
-        self.label = customtkinter.CTkLabel(self, text="this is ToplevelWindow")
+        self.label = customtkinter.CTkLabel(self, text="정말로 종료하시겠습니까?")
         self.label.pack(padx=20, pady=20)
+
+        self.button = customtkinter.CTkButton(self, text="예", command=close_all)
+        self.button.pack(padx=10, pady=10)
+
+        self.button = customtkinter.CTkButton(self, text="아니오", command=close_toplevel)
+        self.button.pack(padx=10, pady=10)
 
 def open_toplevel():
     global toplevel_window
