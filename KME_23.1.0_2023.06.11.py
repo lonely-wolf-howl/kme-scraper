@@ -23,7 +23,7 @@ print('default => MAC : ' + default_mac_address)
 # MAC 주소가 일치하는지 확인하여, 실행 여부를 결정합니다.
 if user_mac_address == default_mac_address:
   # 현재 날짜와 초기 설정된 날짜를 비교하여, 사용 가능 기간인지 확인합니다.
-  default_set_date = datetime.datetime.strptime("2023-05-12", "%Y-%m-%d").date()
+  default_set_date = datetime.datetime.strptime("2023-05-12", "%Y-%m-%d").date() # <--- 시작 날짜를 설정하는 부분입니다!
   current_date = datetime.datetime.now().date()
   expiration_date = default_set_date + datetime.timedelta(days=30) # <--- 초기 설정된 날짜로부터 30일 후
 
@@ -1425,6 +1425,38 @@ if user_mac_address == default_mac_address:
     root.mainloop()
   else:
     print('사용 기간이 만료되었습니다!')
+
+    import customtkinter as ctk
+
+    root = ctk.CTk()
+    root.title("경고")
+    root.geometry("200x100")
+
+    ctk.set_appearance_mode("dark") # system, dark, light
+    ctk.set_default_color_theme("blue") # blue(standard), green, dark-blue
+
+    font_style = ctk.CTkFont("돋움", size=13) # 'font=font_style'을 적용하면 글씨체가 '돋움'으로 변합니다.
+    
+    notice_lable = ctk.CTkLabel(root, text="사용 기간이 만료되었습니다!", font=font_style)
+    notice_lable.pack(fill="both", expand=True)
+
+    root.mainloop()
 else:
     print('')
     print('인증된 사용자가 아닙니다!')
+
+    import customtkinter as ctk
+
+    root = ctk.CTk()
+    root.title("경고")
+    root.geometry("200x100")
+
+    ctk.set_appearance_mode("dark") # system, dark, light
+    ctk.set_default_color_theme("blue") # blue(standard), green, dark-blue
+
+    font_style = ctk.CTkFont("돋움", size=13) # 'font=font_style'을 적용하면 글씨체가 '돋움'으로 변합니다.
+    
+    notice_lable = ctk.CTkLabel(root, text="인증된 사용자가 아닙니다!", font=font_style)
+    notice_lable.pack(fill="both", expand=True)
+
+    root.mainloop()
