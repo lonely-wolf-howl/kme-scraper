@@ -1442,21 +1442,21 @@ if user_mac_address == default_mac_address:
 
     root.mainloop()
 else:
-    print('')
-    print('인증된 사용자가 아닙니다!')
+   print('')
+   print('인증된 사용자가 아닙니다!')
 
-    import customtkinter as ctk
+   import customtkinter as ctk
 
-    root = ctk.CTk()
-    root.title("경고")
-    root.geometry("200x100")
+   root = ctk.CTk()
+   root.title("경고")
+   root.geometry("200x100")
 
-    ctk.set_appearance_mode("dark") # system, dark, light
-    ctk.set_default_color_theme("blue") # blue(standard), green, dark-blue
+   ctk.set_appearance_mode("dark") # system, dark, light
+   ctk.set_default_color_theme("blue") # blue(standard), green, dark-blue
 
-    font_style = ctk.CTkFont("돋움", size=13) # 'font=font_style'을 적용하면 글씨체가 '돋움'으로 변합니다.
-    
-    notice_lable = ctk.CTkLabel(root, text="인증된 사용자가 아닙니다!", font=font_style)
-    notice_lable.pack(fill="both", expand=True)
+   font_style = ctk.CTkFont("돋움", size=13) # 'font=font_style'을 적용하면 글씨체가 '돋움'으로 변합니다.
 
-    root.mainloop()
+   notice_lable = ctk.CTkLabel(root, text="인증된 사용자가 아닙니다!", font=font_style)
+   notice_lable.pack(fill="both", expand=True)
+
+   root.mainloop()
