@@ -1,4 +1,4 @@
-import psutil # for system resource monitoring 
+import psutil # for system resource monitoring
 import datetime # for check date and time
 
 import sys
