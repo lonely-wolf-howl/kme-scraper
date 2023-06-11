@@ -17,7 +17,8 @@ def test_2():
   x = x + 1
   return x
 
-test_2() # cannot access local variable 'x' where it is not associated with a value ('x' is undefined)
+# cannot access local variable 'x' where it is not associated with a value
+test_2() # 'x' is undefined
 
 ''''''
 
