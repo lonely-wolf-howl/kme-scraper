@@ -239,14 +239,24 @@ if user_mac_address == default_mac_address:
         # driver.maximize_window()
 
         # 아마존 id, password를 입력합니다.
-        time.sleep(0.5)
-        driver.find_element(By.CSS_SELECTOR, '#ap_email').send_keys(id_entry.get())
         time.sleep(1)
+        input_string = id_entry.get() # 입력할 문자열 가져오기
+        delay = 0.2 # 입력 간격 (초)
+        input_field = driver.find_element(By.CSS_SELECTOR, '#ap_email')
+        for character in input_string:
+            input_field.send_keys(character)
+            time.sleep(delay)
+        time.sleep(0.5)
         driver.find_element(By.CSS_SELECTOR, '#continue').click()
 
-        time.sleep(0.5)
-        driver.find_element(By.CSS_SELECTOR, '#ap_password').send_keys(password_entry.get())
         time.sleep(1)
+        input_string = password_entry.get() # 입력할 문자열 가져오기
+        delay = 0.2 # 입력 간격 (초)
+        input_field = driver.find_element(By.CSS_SELECTOR, '#ap_password')
+        for character in input_string:
+            input_field.send_keys(character)
+            time.sleep(delay)
+        time.sleep(0.5)
         driver.find_element(By.CSS_SELECTOR, '#signInSubmit').click()
 
         for url in amazon_urls: # <--- 'check_duplicates_and_add_URL()' 함수에서 반환된 배열입니다.
