@@ -1362,9 +1362,9 @@ if user_mac_address == default_mac_address:
     license_frame = ctk.CTkFrame(frame_05)
     license_frame.pack(side="left", fill="x", expand=True, padx=(20,5), pady=10)
 
-    # 사용자 정보 = label
-    license_lable = ctk.CTkLabel(license_frame, text="DESKTOP-LNMR5Q3", font=font_style)
-    license_lable.pack(padx=5)
+    # 사용자 정보(MAC) = label
+    mac_license_lable = ctk.CTkLabel(license_frame, text="40-B0-76-42-8F-7D", font=font_style)
+    mac_license_lable.pack(padx=5)
 
     ''''''
 
