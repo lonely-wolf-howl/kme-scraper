@@ -16,7 +16,7 @@ def get_mac_address():
 # 추출된 사용자의 MAC 주소와 초기 설정된 MAC 값을 비교합니다.
 user_mac_address = get_mac_address()
 print('this user => MAC : ' + user_mac_address)
-# 40-B0-76-42-8F-7D
+# 40-B0-76-42-8F-7D, C8-08-E9-29-8D-DD
 default_mac_address = "40-B0-76-42-8F-7D" # <--- 사용자를 통해 전달받고 설정해야 하는 값입니다!
 print('default => MAC : ' + default_mac_address)
 
@@ -244,8 +244,8 @@ if user_mac_address == default_mac_address:
         delay = 0.2 # 입력 간격 (초)
         input_field = driver.find_element(By.CSS_SELECTOR, '#ap_email')
         for character in input_string:
-            input_field.send_keys(character)
-            time.sleep(delay)
+          input_field.send_keys(character)
+          time.sleep(delay)
         time.sleep(1)
         driver.find_element(By.CSS_SELECTOR, '#continue').click()
 
@@ -254,8 +254,8 @@ if user_mac_address == default_mac_address:
         delay = 0.2 # 입력 간격 (초)
         input_field = driver.find_element(By.CSS_SELECTOR, '#ap_password')
         for character in input_string:
-            input_field.send_keys(character)
-            time.sleep(delay)
+          input_field.send_keys(character)
+          time.sleep(delay)
         time.sleep(1)
         driver.find_element(By.CSS_SELECTOR, '#signInSubmit').click()
 
@@ -449,10 +449,10 @@ if user_mac_address == default_mac_address:
           while os.path.exists(f"../amazon/{asin_code}/image{num_a + 1}.jpg"):
             
             ocr_text = pytesseract.image_to_string(Image.open(f"../amazon/{asin_code}/image{num_a + 1}.jpg"), lang='eng')
-                        
+            
             with open('../2022.10.16.txt', 'r') as f:
               word_list = [line.strip() for line in f.readlines() if line.strip()]
-                        
+            
             # OCR 결과를 검사할 단어 목록(금지 성분 목록표)과 비교하여 겹치는 단어가 있으면 출력합니다.
             found = False
 
@@ -465,7 +465,7 @@ if user_mac_address == default_mac_address:
                     ocr_word = ocr_word.replace("(", "").replace(")", "").replace(".", "").replace(",", "")
                     warning_message = f"[ {ocr_word} ] # {word}"
                     warning_message = warning_message.replace("?", "").replace("_", "")
-                                        
+                    
                     if warning_message not in warnings: # <--- 이전에 추가된 'warning_message'와 중복되지 않는다면,
                       warnings.append(warning_message) # <--- 배열에 누적해서 저장합니다.
 
@@ -525,7 +525,7 @@ if user_mac_address == default_mac_address:
             product_list = pd.read_excel("../product_list.xlsx", sheet_name="amazon")
             filtered_row = product_list[product_list.iloc[:, 0] == asin_code_for_frame]
             value = filtered_row.iloc[0, 2]
-                        
+            
             import numpy as np
 
             if not isinstance(value, float) or not np.isnan(value):
@@ -629,7 +629,6 @@ if user_mac_address == default_mac_address:
           제품 사진 수집 (반복문)
           '''''''''''''''''''''''''''
           # 상품의 'product_id'를 추출합니다.
-            
           product_id = url.rsplit('/', 1)[-1].replace("?rec=home", "")
           # product_id = re.search(r"/(\d+)$", url).group(1)
 
@@ -771,7 +770,7 @@ if user_mac_address == default_mac_address:
                 # thumbnail을 저장합니다.
                 thumbnail_image_for_coupang.save(f"../iherb/{product_id}/coupang(500, 780)/coupang_thumbnail.jpg")
                 print("= coupang_thumbnail created!")
-                    
+                
           log_textbox.delete("0.0", ctk.END)
           log_textbox.insert("0.0", "모든 사진이 정상적으로 저장되었습니다.")
 
@@ -813,7 +812,7 @@ if user_mac_address == default_mac_address:
             other_ingredients_text = other_ingredients_text.split('이 제품에는')[0]
           else:
             pass
-                        
+          
           from googletrans import Translator
           translator = Translator()
           import time
@@ -909,7 +908,7 @@ if user_mac_address == default_mac_address:
             iherb_product_list = pd.read_excel("../product_list.xlsx", sheet_name="iherb")
             iherb_filtered_row = iherb_product_list[iherb_product_list.iloc[:, 0].astype(str) == str(product_id_for_frame)]
             iherb_value = iherb_filtered_row.iloc[0, 2]
-                        
+            
             import numpy as np
 
             if not isinstance(iherb_value, float) or not np.isnan(iherb_value):
@@ -1061,10 +1060,10 @@ if user_mac_address == default_mac_address:
 
           log_textbox.delete("0.0", ctk.END)
           log_textbox.insert("0.0", "제품 검색 완료.")
-                    
+          
           url_textbox.delete("0.0", ctk.END)
           url_textbox.insert("0.0", search_amazon_value)
-                
+        
         '''''''''''''''''''''''''''
         제품 사진
         '''''''''''''''''''''''''''
@@ -1084,7 +1083,7 @@ if user_mac_address == default_mac_address:
         '''''''''''''''''''''''''''
         ingredients_filtered_row = search_amazon_product_list[search_amazon_product_list.iloc[:, 0] == search_asin_code]
         value = ingredients_filtered_row.iloc[0, 2]
-                        
+        
         import numpy as np
 
         if not isinstance(value, float) or not np.isnan(value):
@@ -1116,7 +1115,7 @@ if user_mac_address == default_mac_address:
         search_product_id = code_entry.get()
         search_iherb_product_list = pd.read_excel("../product_list.xlsx", sheet_name="iherb")
         filtered_row = search_iherb_product_list[search_iherb_product_list.iloc[:, 0].astype(str) == str(search_product_id)]
-                
+        
         if filtered_row.empty or filtered_row is False:
           log_textbox.delete("0.0", ctk.END)
           log_textbox.insert("0.0", "[경고] 해당 제품은 존재하지 않습니다!")
@@ -1146,7 +1145,7 @@ if user_mac_address == default_mac_address:
         '''''''''''''''''''''''''''
         ingredients_filtered_row = search_iherb_product_list[search_iherb_product_list.iloc[:, 0].astype(str) == str(search_product_id)]
         value = ingredients_filtered_row.iloc[0, 2]
-                        
+        
         import numpy as np
 
         if not isinstance(value, float) or not np.isnan(value):
@@ -1340,7 +1339,7 @@ if user_mac_address == default_mac_address:
     license_frame.pack(side="left", fill="x", expand=True, padx=(10,5), pady=10)
 
     # 사용자 정보 = label
-    mac_license_lable = ctk.CTkLabel(license_frame, text="40-B0-76-42-8F-7D", font=font_style) # 40-B0-76-42-8F-7D
+    mac_license_lable = ctk.CTkLabel(license_frame, text="40-B0-76-42-8F-7D", font=font_style) # 40-B0-76-42-8F-7D, C8-08-E9-29-8D-DD
     mac_license_lable.pack(padx=5)
 
     ''''''
