@@ -16,14 +16,13 @@ def get_mac_address():
 # 추출된 사용자의 MAC 주소와 초기 설정된 MAC 값을 비교합니다.
 user_mac_address = get_mac_address()
 print('this user => MAC : ' + user_mac_address)
-# 40-B0-76-42-8F-7D, C8-08-E9-29-8D-DD
-default_mac_address = "40-B0-76-42-8F-7D" # <--- 사용자를 통해 전달받고 설정해야 하는 값입니다!
+default_mac_address = "40-B0-76-42-8F-**" # <--- 사용자를 통해 전달받고 설정해야 하는 값입니다!
 print('default => MAC : ' + default_mac_address)
 
 # MAC 주소가 일치하는지 확인하여, 실행 여부를 결정합니다.
 if user_mac_address == default_mac_address:
   # 현재 날짜와 초기 설정된 날짜를 비교하여, 사용 가능 기간인지 확인합니다.
-  default_set_date = datetime.datetime.strptime("2023-06-01", "%Y-%m-%d").date() # <--- 시작 날짜를 설정하는 부분입니다!
+  default_set_date = datetime.datetime.strptime("2023-05-01", "%Y-%m-%d").date() # <--- 시작 날짜를 설정하는 부분입니다!
   current_date = datetime.datetime.now().date()
   expiration_date = default_set_date + datetime.timedelta(days=30) # <--- 초기 설정된 날짜로부터 30일 후
 
@@ -1339,7 +1338,7 @@ if user_mac_address == default_mac_address:
     license_frame.pack(side="left", fill="x", expand=True, padx=(10,5), pady=10)
 
     # 사용자 정보 = label
-    mac_license_lable = ctk.CTkLabel(license_frame, text="40-B0-76-42-8F-7D", font=font_style) # 40-B0-76-42-8F-7D, C8-08-E9-29-8D-DD
+    mac_license_lable = ctk.CTkLabel(license_frame, text="40-B0-76-42-8F-**", font=font_style)
     mac_license_lable.pack(padx=5)
 
     ''''''
